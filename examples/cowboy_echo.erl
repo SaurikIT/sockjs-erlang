@@ -15,6 +15,7 @@ main(_) ->
     ok = application:start(sockjs),
     ok = application:start(ranch),
     ok = application:start(crypto),
+    ok = application:start(cowlib),
     ok = application:start(cowboy),
 
     SockjsState = sockjs_handler:init_state(

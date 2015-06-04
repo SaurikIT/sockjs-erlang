@@ -11,6 +11,7 @@
 main(_) ->
     Port = 8081,
     application:start(sockjs),
+    application:start(cowlib),
     application:start(cowboy),
 
     MultiplexState = sockjs_multiplex:init_state(
