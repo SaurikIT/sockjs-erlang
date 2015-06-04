@@ -132,7 +132,7 @@ verify_callback(Req, Success) ->
     {CB, Req1} = sockjs_http:callback(Req),
     case CB of
         undefined ->
-            sockjs_http:reply(500, [], "\"callback\" parameter required", Req1);
+            sockjs_http:reply(400, [], "\"callback\" parameter required", Req1);
         _ ->
             Success(Req1, CB)
     end.
@@ -164,14 +164,14 @@ jsonp_send(Req, Headers, _Service, Session) ->
 handle_recv(Req, Body, Session) ->
     case Body of
         _Any when Body =:= <<>> ->
-            {error, sockjs_http:reply(500, [], "Payload expected.", Req)};
+            {error, sockjs_http:reply(400, [], "Payload expected.", Req)};
         _Any ->
             case sockjs_json:decode(Body) of
                 {ok, Decoded} when is_list(Decoded)->
                     sockjs_session:received(Decoded, Session),
                     ok;
                 {error, _} ->
-                    {error, sockjs_http:reply(500, [],
+                    {error, sockjs_http:reply(400, [],
                                               "Broken JSON encoding.", Req)}
             end
     end.
