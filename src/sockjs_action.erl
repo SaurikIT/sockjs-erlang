@@ -128,13 +128,25 @@ jsonp(Req, Headers, Service, SessionId) ->
         end,
     verify_callback(Req, S).
 
+verify_callback([]) ->
+    true;
+verify_callback([C | _]) when C < 97 orelse C > 122, C < 65 orelse C > 90, C < 48 orelse C > 57, C =/= 45, C =/= 95, C =/= 46 ->
+    false;
+verify_callback([_ | CB]) ->
+    verify_callback(CB).
+
 verify_callback(Req, Success) ->
     {CB, Req1} = sockjs_http:callback(Req),
     case CB of
         undefined ->
             sockjs_http:reply(400, [], "\"callback\" parameter required", Req1);
         _ ->
-            Success(Req1, CB)
+            case verify_callback(CB) of
+                false ->
+                    sockjs_http:reply(400, [], "invalid \"callback\" parameter", Req1);
+                true ->
+                    Success(Req1, CB)
+            end
     end.
 
 %% --------------------------------------------------------------------------
