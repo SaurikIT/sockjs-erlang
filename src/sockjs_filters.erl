@@ -50,9 +50,12 @@ xhr_cors(Req, Headers) ->
                        undefined -> [];
                        V         -> [{"Access-Control-Allow-Headers", V}]
                    end,
-    H = [{"Access-Control-Allow-Origin",      Origin},
-         {"Access-Control-Allow-Credentials", "true"}],
-    {H ++ AllowHeaders ++ Headers, Req2}.
+    H = [{"Access-Control-Allow-Origin",      Origin}],
+    AllowCredentials = case Origin of
+                           "*" -> [];
+                           _   -> [{"Access-Control-Allow-Credentials", "true"}]
+                       end,
+    {H ++ AllowCredentials ++ AllowHeaders ++ Headers, Req2}.
 
 -spec xhr_options_post(req(), headers()) -> {headers(), req()}.
 xhr_options_post(Req, Headers) ->
